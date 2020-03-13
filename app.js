@@ -12,6 +12,10 @@ const Sequelize = require('sequelize');
 const { database, user, password } = require('./database/connection');
 const SESSION_SECRET = require('./database/session-secret');
 
+const User = require('./models/user');
+const Character = require('./models/character');
+const Abilities = require('./models/abilities');
+
 const sequelizeDB = new Sequelize(database, user, password, {
   host: 'localhost',
   dialect: 'postgres'
@@ -33,6 +37,10 @@ app.use(
     saveUninitialized: false
   })
 );
+
+User.hasMany(Character);
+
+Character.hasOne(Abilities);
 
 sequelizeDB
   // .sync({ force: true })
