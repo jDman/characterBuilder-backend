@@ -41,6 +41,8 @@ app.use(
 User.hasMany(Character);
 
 Character.hasOne(Abilities);
+Character.hasOne(Equipment);
+Character.hasOne(Traits);
 
 sequelizeDB
   // .sync({ force: true })
