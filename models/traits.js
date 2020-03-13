@@ -1,4 +1,7 @@
-const Traits = sequelize.define(
+const Sequelize = require('sequelize');
+const sequelizeDB = require('../database/connection');
+
+const Traits = sequelizeDB.define(
   'traits',
   {
     ability_score_increase: {

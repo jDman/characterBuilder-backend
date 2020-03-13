@@ -7,7 +7,8 @@ const SessionStore = require('express-session-sequelize')(session.Store);
 const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 const multer = require('multer');
-const Sequelize = require('sequelize');
+
+const csrfProtection = csrf();
 
 const { database, user, password } = require('./database/connection');
 const SESSION_SECRET = require('./database/session-secret');
@@ -15,11 +16,10 @@ const SESSION_SECRET = require('./database/session-secret');
 const User = require('./models/user');
 const Character = require('./models/character');
 const Abilities = require('./models/abilities');
+const Equipment = require('./models/equipment');
+const Traits = require('./models/traits');
 
-const sequelizeDB = new Sequelize(database, user, password, {
-  host: 'localhost',
-  dialect: 'postgres'
-});
+const sequelizeDB = require('./database/connection');
 
 const sequelizeSessionStore = new SessionStore({
   db: sequelizeDB
@@ -37,12 +37,17 @@ app.use(
     saveUninitialized: false
   })
 );
+app.use(csrfProtection);
+
+/** MODEL RELATIONSHIPS  **/
 
 User.hasMany(Character);
 
 Character.hasOne(Abilities);
 Character.hasOne(Equipment);
 Character.hasOne(Traits);
+
+/**************************/
 
 sequelizeDB
   // .sync({ force: true })

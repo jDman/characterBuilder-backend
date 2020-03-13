@@ -1,4 +1,7 @@
-const Abilities = sequelize.define(
+const Sequelize = require('sequelize');
+const sequelizeDB = require('../database/connection');
+
+const Abilities = sequelizeDB.define(
   'abilities',
   {
     strength: {
