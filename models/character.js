@@ -4,28 +4,31 @@ const sequelizeDB = require('../database/connection');
 const Character = sequelizeDB.define('character', {
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   background: {
     type: Sequelize.ENUM,
     allowNull: false,
-    values: ['acolyte', 'criminal', 'folk_hero', 'noble', 'sage', 'soldier']
+    values: ['acolyte', 'criminal', 'folk_hero', 'noble', 'sage', 'soldier'],
   },
   additional_info: {
     type: Sequelize.STRING(4000),
-    allowNull: true,
+    allowNull: false,
+    defaultValue: '',
     validate: {
-      len: [0, 4000]
-    }
+      len: [0, 4000],
+    },
   },
-  race: {
-    type: Sequelize.STRING,
-    allowNull: false
+  raceType: {
+    type: Sequelize.ENUM,
+    allowNull: false,
+    values: ['human', 'elf', 'dwarf'],
   },
-  class: {
-    type: Sequelize.STRING,
-    allowNull: false
-  }
+  classType: {
+    type: Sequelize.ENUM,
+    allowNull: false,
+    values: ['warrior', 'rogue', 'mage'],
+  },
 });
 
 module.exports = Character;
