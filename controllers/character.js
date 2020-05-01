@@ -54,6 +54,7 @@ exports.getCharacter = async (req, res, next) => {
 
 exports.addCharacter = async (req, res, next) => {
   const { name, background, additional_info, raceType, classType } = req.body;
+  const userId = req.user.id;
 
   try {
     const character = await Character.create({
@@ -62,6 +63,7 @@ exports.addCharacter = async (req, res, next) => {
       additional_info,
       raceType,
       classType,
+      userId,
     });
 
     return res
