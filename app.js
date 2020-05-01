@@ -12,6 +12,8 @@ const csrfProtection = csrf();
 
 const SESSION_SECRET = require('./database/session-secret');
 
+const generateMD5 = require('./utils/generateMD5');
+
 const User = require('./models/user');
 const Character = require('./models/character');
 const Abilities = require('./models/abilities');
@@ -21,12 +23,22 @@ const Traits = require('./models/traits');
 const sequelizeDB = require('./database/connection');
 
 const sequelizeSessionStore = new SessionStore({
-  db: sequelizeDB
+  db: sequelizeDB,
 });
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -43,7 +55,7 @@ app.use(
     secret: SESSION_SECRET,
     store: sequelizeSessionStore,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
   })
 );
 app.use(csrfProtection);
@@ -61,11 +73,25 @@ Character.hasOne(Traits);
 sequelizeDB
   // .sync({ force: true })
   .sync()
+  .then((result) => {
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({
+        name: 'Test',
+        email: 'test@test.com',
+        gravatar_hash: generateMD5('test@test.com'),
+      });
+    }
+    return user;
+  })
+
   .then(() => {
     console.log('Connection has been established successfully.');
 
     app.listen(3000);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Unable to connect to the database:', err);
   });

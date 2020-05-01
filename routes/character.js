@@ -19,12 +19,12 @@ router.post(
 );
 
 router.put(
-  'character/add',
+  'character/edit',
   [body('name').trim().isAlphanumeric()],
   [body('background').trim().isAlphanumeric()],
   [body('raceType').trim().isAlphanumeric()],
   [body('classType').trim().isAlphanumeric()],
-  characterController.updateCharacter
+  characterController.editCharacter
 );
 
 router.delete('/character/remove', characterController.deleteCharacter);

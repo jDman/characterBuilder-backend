@@ -1,4 +1,5 @@
 const Character = require('../models/character');
+const Abilities = require('../models/abilities');
 
 exports.getCharacters = async (req, res, next) => {
   const currentBatch = +req.query.batch || 1;
@@ -75,7 +76,7 @@ exports.addCharacter = async (req, res, next) => {
   }
 };
 
-exports.updateCharacter = async (req, res, next) => {
+exports.editCharacter = async (req, res, next) => {
   const id = req.params.characterId;
 
   const { name, background, additional_info, raceType, classType } = req.body;
@@ -103,7 +104,7 @@ exports.deleteCharacter = async (req, res, next) => {
   const id = req.params.characterId;
 
   try {
-    await Character.destroy({ where: { id: characterId } });
+    await Character.destroy({ where: { id: id } });
 
     return res.status(200).json({ message: 'Removed character successfully.' });
   } catch (err) {

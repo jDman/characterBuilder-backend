@@ -6,28 +6,28 @@ const Abilities = sequelizeDB.define(
   {
     strength: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     dexterity: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     constitution: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     intelligence: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     wisdom: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     charisma: {
       type: Sequelize.INTEGER,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   },
   { freezeTableName: true }
 );

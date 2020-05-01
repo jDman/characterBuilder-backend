@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 
 const characterController = require('../../controllers/character');
+const Abilities = require('../../models/abilities');
 const Character = require('../../models/character');
 
 const charactersMock = [
@@ -223,7 +224,7 @@ describe('character controller', () => {
     });
   });
 
-  describe('updateCharacter', () => {
+  describe('editCharacter', () => {
     const aCharacter = {
       id: '1',
       name: 'Tester',
@@ -252,7 +253,7 @@ describe('character controller', () => {
       Character.update.throws();
 
       await characterController
-        .updateCharacter(req, {}, () => {})
+        .editCharacter(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
@@ -287,7 +288,7 @@ describe('character controller', () => {
       });
 
       await characterController
-        .updateCharacter(req, res, () => {})
+        .editCharacter(req, res, () => {})
         .then(() => {
           expect(res.character).to.eql(aCharacter);
           expect(res.message).to.eq('Updated character successfully.');
@@ -295,5 +296,60 @@ describe('character controller', () => {
         });
     });
   });
-  describe('deleteCharacter', () => {});
+  describe('deleteCharacter', () => {
+    before(() => {
+      sinon.stub(Character, 'destroy');
+    });
+
+    after(() => {
+      Character.destroy.restore();
+    });
+
+    it('should return error 500 if accessing the database fails', async () => {
+      const req = {
+        params: {
+          characterId: '1',
+        },
+      };
+
+      Character.destroy.throws();
+
+      await characterController
+        .deleteCharacter(req, {}, () => {})
+        .then((result) => {
+          expect(result).to.be.an('error');
+          expect(result).to.have.property('statusCode', 500);
+        });
+    });
+
+    it('should successfully remove a character', async () => {
+      const req = {
+        params: {
+          characterId: '1',
+        },
+      };
+
+      const res = {
+        message: '',
+        statusCode: 500,
+        status: function (code) {
+          this.statusCode = code;
+
+          return this;
+        },
+        json: function (data) {
+          this.message = data.message;
+        },
+      };
+
+      Character.destroy.returns(true);
+
+      await characterController
+        .deleteCharacter(req, res, () => {})
+        .then(() => {
+          expect(res.message).to.eq('Removed character successfully.');
+          expect(res.statusCode).to.eq(200);
+        });
+    });
+  });
 });
