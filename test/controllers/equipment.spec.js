@@ -104,7 +104,7 @@ describe('equipmentController', () => {
 
       Character.findByPk.returns({ id: '1' });
 
-      Equipment.findAll.returns(equipment);
+      Equipment.findAll.returns([equipment]);
 
       await equipmentController
         .getEquipment(req, res, () => {})

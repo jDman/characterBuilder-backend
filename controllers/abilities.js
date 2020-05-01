@@ -5,7 +5,7 @@ exports.getAbilities = async (req, res, next) => {
   const characterId = req.params.characterId;
 
   try {
-    const abilities = await Abilities.findAll({
+    const [abilities] = await Abilities.findAll({
       where: { characterId: characterId },
     });
 

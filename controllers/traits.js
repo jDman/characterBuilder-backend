@@ -14,7 +14,7 @@ exports.getTraits = async (req, res, next) => {
       throw error;
     }
 
-    const traits = Traits.findAll({
+    const [traits] = await Traits.findAll({
       where: { characterId: characterId },
     });
 
@@ -61,6 +61,7 @@ exports.addTraits = async (req, res, next) => {
       size,
       speed,
       languages,
+      characterId,
     });
 
     return res.status(201).json({

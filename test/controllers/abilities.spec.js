@@ -65,7 +65,7 @@ describe('abilitiesController', () => {
         },
       ];
 
-      Abilities.findAll.returns(abilities);
+      Abilities.findAll.returns([abilities]);
 
       await abilitiesController
         .getAbilities(req, res, () => {})

@@ -112,7 +112,7 @@ describe('traitsController', () => {
 
       Character.findByPk.returns({ id: '1' });
 
-      Traits.findAll.returns(traits);
+      Traits.findAll.returns([traits]);
 
       await traitsController
         .getTraits(req, res, () => {})

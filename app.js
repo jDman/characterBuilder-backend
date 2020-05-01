@@ -20,6 +20,11 @@ const Abilities = require('./models/abilities');
 const Equipment = require('./models/equipment');
 const Traits = require('./models/traits');
 
+const characterRoutes = require('./routes/character');
+const abilitiesRoutes = require('./routes/abilities');
+const equipmentRoutes = require('./routes/equipment');
+const traitsRoutes = require('./routes/traits');
+
 const sequelizeDB = require('./database/connection');
 
 const sequelizeSessionStore = new SessionStore({
@@ -58,7 +63,15 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(csrfProtection);
+// app.use(csrfProtection);
+
+app.use(
+  '/build',
+  characterRoutes,
+  abilitiesRoutes,
+  traitsRoutes,
+  equipmentRoutes
+);
 
 /** MODEL RELATIONSHIPS  **/
 
@@ -90,7 +103,7 @@ sequelizeDB
   .then(() => {
     console.log('Connection has been established successfully.');
 
-    app.listen(3000);
+    app.listen(5050);
   })
   .catch((err) => {
     console.error('Unable to connect to the database:', err);

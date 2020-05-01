@@ -5,7 +5,7 @@ const router = express.Router();
 
 const abilitiesController = require('../controllers/abilities');
 
-router.get('/abilities', abilitiesController.getAbilities);
+router.get('/abilities/:characterId', abilitiesController.getAbilities);
 
 router.post(
   '/abilities/add/:characterId',
@@ -33,3 +33,5 @@ router.delete(
   '/abilities/remove/:characterId',
   abilitiesController.deleteAbilities
 );
+
+module.exports = router;

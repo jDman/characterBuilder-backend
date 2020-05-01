@@ -5,12 +5,12 @@ const router = express.Router();
 
 const characterController = require('../controllers/character');
 
-router.get('/character/:characterId', characterController.getCharacter);
-
 router.get('/characters', characterController.getCharacters);
 
+router.get('/character/:characterId', characterController.getCharacter);
+
 router.post(
-  'character/add',
+  '/character/add',
   [body('name').trim().isAlphanumeric()],
   [body('background').trim().isAlphanumeric()],
   [body('raceType').trim().isAlphanumeric()],
@@ -19,7 +19,7 @@ router.post(
 );
 
 router.put(
-  'character/edit/:characterId',
+  '/character/edit/:characterId',
   [body('name').trim().isAlphanumeric()],
   [body('background').trim().isAlphanumeric()],
   [body('raceType').trim().isAlphanumeric()],

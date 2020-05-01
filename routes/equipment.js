@@ -5,7 +5,7 @@ const router = express.Router();
 
 const equipmentController = require('../controllers/equipment');
 
-router.get('/equipment', equipmentController.getEquipment);
+router.get('/equipment/:characterId', equipmentController.getEquipment);
 
 router.post(
   '/equipment/add/:characterId',
@@ -27,3 +27,5 @@ router.delete(
   '/equipment/remove/:characterId',
   equipmentController.deleteEquipment
 );
+
+module.exports = router;

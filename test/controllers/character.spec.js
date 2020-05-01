@@ -177,6 +177,7 @@ describe('character controller', () => {
 
     it('should return error 500 if accessing the database fails', async () => {
       const req = {
+        user: { id: '123' },
         body: aCharacter,
       };
 
@@ -192,6 +193,7 @@ describe('character controller', () => {
 
     it('should create a character with a response status of 201', async () => {
       const req = {
+        user: { id: '123' },
         body: aCharacter,
       };
 

@@ -14,7 +14,7 @@ exports.getEquipment = async (req, res, next) => {
       throw error;
     }
 
-    const equipment = Equipment.findAll({
+    const [equipment] = await Equipment.findAll({
       where: { characterId: characterId },
     });
 
@@ -49,6 +49,7 @@ exports.addEquipment = async (req, res, next) => {
       armor_class,
       weapon_proficiencies,
       wealth,
+      characterId,
     });
 
     return res.status(201).json({

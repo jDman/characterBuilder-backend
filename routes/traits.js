@@ -5,7 +5,7 @@ const router = express.Router();
 
 const traitsController = require('../controllers/traits');
 
-router.get('/traits', traitsController.getTraits);
+router.get('/traits/:characterId', traitsController.getTraits);
 
 router.post(
   '/traits/add/:characterId',
@@ -31,3 +31,5 @@ router.put(
 );
 
 router.delete('/traits/remove/:characterId', traitsController.deleteTraits);
+
+module.exports = router;
