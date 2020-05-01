@@ -19,7 +19,7 @@ router.post(
 );
 
 router.put(
-  'character/edit',
+  'character/edit/:characterId',
   [body('name').trim().isAlphanumeric()],
   [body('background').trim().isAlphanumeric()],
   [body('raceType').trim().isAlphanumeric()],
@@ -27,6 +27,9 @@ router.put(
   characterController.editCharacter
 );
 
-router.delete('/character/remove', characterController.deleteCharacter);
+router.delete(
+  '/character/remove/:characterId',
+  characterController.deleteCharacter
+);
 
 module.exports = router;

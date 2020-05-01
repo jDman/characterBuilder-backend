@@ -71,7 +71,7 @@ Character.hasOne(Traits);
 /**************************/
 
 sequelizeDB
-  // .sync({ force: true })
+  //.sync({ force: true })
   .sync()
   .then((result) => {
     return User.findByPk(1);
