@@ -1,18 +1,20 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 
-const abilitiesController = require('../../controllers/abilities');
-const Abilities = require('../../models/abilities');
+const traitsController = require('../../controllers/traits');
+const Traits = require('../../models/traits');
 const Character = require('../../models/character');
 
-describe('abilitiesController', () => {
-  describe('getAbilities', () => {
+describe('traitsController', () => {
+  describe('getTraits', () => {
     before(() => {
-      sinon.stub(Abilities, 'findAll');
+      sinon.stub(Traits, 'findAll');
+      sinon.stub(Character, 'findByPk');
     });
 
     after(() => {
-      Abilities.findAll.restore();
+      Traits.findAll.restore();
+      Character.findByPk.restore();
     });
 
     it('should return error 500 if accessing the database fails', async () => {
@@ -22,17 +24,17 @@ describe('abilitiesController', () => {
         },
       };
 
-      Abilities.findAll.throws();
+      Character.findByPk.throws();
 
-      await abilitiesController
-        .getAbilities(req, {}, () => {})
+      await traitsController
+        .getTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
         });
     });
 
-    it('should return a characters abilities', async () => {
+    it('should return a 500 error when accessing database for traits fails', async () => {
       const req = {
         params: {
           characterId: '1',
@@ -41,7 +43,7 @@ describe('abilitiesController', () => {
 
       const res = {
         message: '',
-        abilities: null,
+        traits: null,
         statusCode: 500,
         status: function (code) {
           this.statusCode = code;
@@ -50,47 +52,90 @@ describe('abilitiesController', () => {
         },
         json: function (data) {
           this.message = data.message;
-          this.abilities = data.abilities;
+          this.traits = data.traits;
         },
       };
 
-      const abilities = [
-        {
-          strength: 4,
-          dexterity: 8,
-          constitution: 9,
-          intelligence: 6,
-          wisdom: 5,
-          charisma: 7,
+      const traits = {
+        ability_score_increase: 2,
+        age: 19,
+        alignment: 'lawful',
+        morality: 'good',
+        size: 'large',
+        speed: 10,
+        languages: 'common',
+      };
+
+      Character.findByPk.returns({ id: '1' });
+
+      Traits.findAll.throws();
+
+      await traitsController
+        .getTraits(req, res, () => {})
+        .then((result) => {
+          expect(result).to.be.an('error');
+          expect(result).to.have.property('statusCode', 500);
+        });
+    });
+
+    it('should return a characters traits', async () => {
+      const req = {
+        params: {
+          characterId: '1',
         },
-      ];
+      };
 
-      Abilities.findAll.returns(abilities);
+      const res = {
+        message: '',
+        traits: null,
+        statusCode: 500,
+        status: function (code) {
+          this.statusCode = code;
 
-      await abilitiesController
-        .getAbilities(req, res, () => {})
+          return this;
+        },
+        json: function (data) {
+          this.message = data.message;
+          this.traits = data.traits;
+        },
+      };
+
+      const traits = {
+        ability_score_increase: 2,
+        age: 19,
+        alignment: 'lawful',
+        morality: 'good',
+        size: 'large',
+        speed: 10,
+        languages: 'common',
+      };
+
+      Character.findByPk.returns({ id: '1' });
+
+      Traits.findAll.returns(traits);
+
+      await traitsController
+        .getTraits(req, res, () => {})
         .then(() => {
-          expect(res.abilities).to.eql(abilities);
-          expect(res.message).to.eq(
-            "Fetched character's abilities successfully."
-          );
+          expect(res.traits).to.eql(traits);
+          expect(res.message).to.eq("Fetched character's traits successfully.");
           expect(res.statusCode).to.eq(200);
         });
     });
   });
 
-  describe('addAbilities', () => {
+  describe('addTraits', () => {
     before(() => {
       sinon.stub(Character, 'findByPk');
-      sinon.stub(Abilities, 'create');
+      sinon.stub(Traits, 'create');
     });
 
     after(() => {
       Character.findByPk.restore();
-      Abilities.create.restore();
+      Traits.create.restore();
     });
 
-    const abilities = {
+    const traits = {
       strength: 4,
       dexterity: 8,
       constitution: 9,
@@ -104,29 +149,29 @@ describe('abilitiesController', () => {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
 
       Character.findByPk.throws();
 
-      await abilitiesController
-        .addAbilities(req, {}, () => {})
+      await traitsController
+        .addTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
         });
     });
 
-    it('should throw a 500 error if cannot access the database to create an ability', async () => {
+    it('should throw a 500 error if cannot access the database to create traits', async () => {
       const req = {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
 
       const res = {
-        abilities: null,
+        traits: null,
         message: '',
         statusCode: 500,
         status: function (code) {
@@ -136,16 +181,16 @@ describe('abilitiesController', () => {
         },
         json: function (data) {
           this.message = data.message;
-          this.abilities = data.abilities;
+          this.traits = data.traits;
         },
       };
 
       Character.findByPk.returns({ id: '1' });
 
-      Abilities.create.throws();
+      Traits.create.throws();
 
-      await abilitiesController
-        .addAbilities(req, {}, () => {})
+      await traitsController
+        .addTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
@@ -157,29 +202,29 @@ describe('abilitiesController', () => {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
 
       Character.findByPk.returns(null);
 
-      await abilitiesController
-        .addAbilities(req, {}, () => {})
+      await traitsController
+        .addTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 404);
         });
     });
 
-    it('should create an ability and return it with a response of 201', async () => {
+    it('should create traits and return it with a response of 201', async () => {
       const req = {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
 
       const res = {
-        abilities: null,
+        traits: null,
         message: '',
         statusCode: 500,
         status: function (code) {
@@ -189,38 +234,36 @@ describe('abilitiesController', () => {
         },
         json: function (data) {
           this.message = data.message;
-          this.abilities = data.abilities;
+          this.traits = data.traits;
         },
       };
 
       Character.findByPk.returns({ id: '1' });
 
-      Abilities.create.returns(abilities);
+      Traits.create.returns(traits);
 
-      await abilitiesController
-        .addAbilities(req, res, () => {})
+      await traitsController
+        .addTraits(req, res, () => {})
         .then((result) => {
           expect(res.statusCode).to.eq(201);
-          expect(res.abilities).to.eql(abilities);
-          expect(res.message).to.eq(
-            'Created character abilities successfully.'
-          );
+          expect(res.traits).to.eql(traits);
+          expect(res.message).to.eq('Created character traits successfully.');
         });
     });
   });
 
-  describe('editAbilities', () => {
+  describe('editTraits', () => {
     before(() => {
       sinon.stub(Character, 'findByPk');
-      sinon.stub(Abilities, 'update');
+      sinon.stub(Traits, 'update');
     });
 
     after(() => {
       Character.findByPk.restore();
-      Abilities.update.restore();
+      Traits.update.restore();
     });
 
-    const abilities = {
+    const traits = {
       strength: 4,
       dexterity: 8,
       constitution: 9,
@@ -234,13 +277,13 @@ describe('abilitiesController', () => {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
 
       Character.findByPk.throws();
 
-      await abilitiesController
-        .editAbilities(req, {}, () => {})
+      await traitsController
+        .editTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
@@ -252,28 +295,28 @@ describe('abilitiesController', () => {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
 
       Character.findByPk.returns(null);
 
-      await abilitiesController
-        .editAbilities(req, {}, () => {})
+      await traitsController
+        .editTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 404);
         });
     });
 
-    it('should throw a 500 error if cannot access database for editing an ability', async () => {
+    it('should throw a 500 error if cannot access database for editing traits', async () => {
       const req = {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
       const res = {
-        abilities: null,
+        traits: null,
         message: '',
         statusCode: 500,
         status: function (code) {
@@ -283,31 +326,31 @@ describe('abilitiesController', () => {
         },
         json: function (data) {
           this.message = data.message;
-          this.abilities = data.abilities;
+          this.traits = data.traits;
         },
       };
 
       Character.findByPk.returns({ id: '1' });
 
-      Abilities.update.throws();
+      Traits.update.throws();
 
-      await abilitiesController
-        .editAbilities(req, {}, () => {})
+      await traitsController
+        .editTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
         });
     });
 
-    it('should update the ability and return a status of 200', async () => {
+    it('should update the traits and return a status of 200', async () => {
       const req = {
         params: {
           characterId: '1',
         },
-        body: abilities,
+        body: traits,
       };
       const res = {
-        abilities: null,
+        traits: null,
         message: '',
         statusCode: 500,
         status: function (code) {
@@ -317,35 +360,33 @@ describe('abilitiesController', () => {
         },
         json: function (data) {
           this.message = data.message;
-          this.abilities = data.abilities;
+          this.traits = data.traits;
         },
       };
 
       Character.findByPk.returns({ id: '1' });
 
-      Abilities.update.returns(abilities);
+      Traits.update.returns(traits);
 
-      await abilitiesController
-        .editAbilities(req, res, () => {})
+      await traitsController
+        .editTraits(req, res, () => {})
         .then(() => {
           expect(res.statusCode).to.eq(200);
-          expect(res.abilities).to.eql(abilities);
-          expect(res.message).to.eq(
-            'Updated character abilities successfully.'
-          );
+          expect(res.traits).to.eql(traits);
+          expect(res.message).to.eq('Updated character traits successfully.');
         });
     });
   });
 
-  describe('deleteAbilities', () => {
+  describe('deleteTraits', () => {
     before(() => {
       sinon.stub(Character, 'findByPk');
-      sinon.stub(Abilities, 'destroy');
+      sinon.stub(Traits, 'destroy');
     });
 
     after(() => {
       Character.findByPk.restore();
-      Abilities.destroy.restore();
+      Traits.destroy.restore();
     });
 
     it('should throw a 500 error if cannot access database', async () => {
@@ -357,8 +398,8 @@ describe('abilitiesController', () => {
 
       Character.findByPk.throws();
 
-      await abilitiesController
-        .deleteAbilities(req, {}, () => {})
+      await traitsController
+        .deleteTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
@@ -374,15 +415,15 @@ describe('abilitiesController', () => {
 
       Character.findByPk.returns(null);
 
-      await abilitiesController
-        .deleteAbilities(req, {}, () => {})
+      await traitsController
+        .deleteTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 404);
         });
     });
 
-    it('should throw error 500 if cannot access database to destroy abilities', async () => {
+    it('should throw error 500 if cannot access database to destroy traits', async () => {
       const req = {
         params: {
           characterId: '1',
@@ -404,10 +445,10 @@ describe('abilitiesController', () => {
 
       Character.findByPk.returns({ id: '1' });
 
-      Abilities.destroy.throws();
+      Traits.destroy.throws();
 
-      await abilitiesController
-        .deleteAbilities(req, {}, () => {})
+      await traitsController
+        .deleteTraits(req, {}, () => {})
         .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
@@ -436,14 +477,12 @@ describe('abilitiesController', () => {
 
       Character.findByPk.returns({ id: '1' });
 
-      Abilities.destroy.returns({});
+      Traits.destroy.returns({});
 
-      await abilitiesController
-        .deleteAbilities(req, res, () => {})
+      await traitsController
+        .deleteTraits(req, res, () => {})
         .then(() => {
-          expect(res.message).to.eql(
-            'Removed character abilities successfully.'
-          );
+          expect(res.message).to.eql('Removed character traits successfully.');
           expect(res).to.have.property('statusCode', 200);
         });
     });

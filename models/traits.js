@@ -6,29 +6,36 @@ const Traits = sequelizeDB.define(
   {
     ability_score_increase: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     age: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     alignment: {
-      type: Sequelize.STRING,
-      allowNull: false
+      type: Sequelize.ENUM,
+      allowNull: false,
+      values: ['lawful', 'neutral', 'chaotic'],
+    },
+    morality: {
+      type: Sequelize.ENUM,
+      allowNull: false,
+      values: ['good', 'neutral', 'evil'],
     },
     size: {
       type: Sequelize.ENUM,
       allowNull: false,
-      values: ['small', 'medium', 'large']
+      values: ['small', 'medium', 'large'],
     },
     speed: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     languages: {
-      type: Sequelize.ARRAY(Sequelize.TEXT),
-      allowNull: false
-    }
+      type: Sequelize.ENUM,
+      allowNull: false,
+      values: ['common', 'dwarvish', 'elvish'],
+    },
   },
   { freezeTableName: true }
 );
