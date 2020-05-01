@@ -6,16 +6,17 @@ const Equipment = sequelizeDB.define(
   {
     armor_class: {
       type: Sequelize.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     weapon_proficiencies: {
-      type: Sequelize.ARRAY(Sequelize.TEXT),
-      allowNull: false
+      type: Sequelize.ENUM,
+      allowNull: false,
+      values: ['simple', 'martial'],
     },
     wealth: {
       type: Sequelize.INTEGER,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   },
   { freezeTableName: true }
 );
