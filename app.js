@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 const multer = require('multer');
 
-const csrfProtection = csrf();
+const csrfProtection = csrf({ cookie: true });
 
 const SESSION_SECRET = require('./database/session-secret');
 
@@ -54,6 +54,9 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.disable('x-powered-by');
+
 app.use(cookieParser());
 app.use(
   session({
@@ -73,6 +76,10 @@ app.use(
   equipmentRoutes
 );
 
+// app.all('*', (req, res, next) => {
+//   res.cookie('XSRF-TOKEN', req.csrfToken());
+// });
+
 /** MODEL RELATIONSHIPS  **/
 
 User.hasMany(Character);
@@ -86,20 +93,6 @@ Character.hasOne(Traits);
 sequelizeDB
   //.sync({ force: true })
   .sync()
-  .then((result) => {
-    return User.findByPk(1);
-  })
-  .then((user) => {
-    if (!user) {
-      return User.create({
-        name: 'Test',
-        email: 'test@test.com',
-        gravatar_hash: generateMD5('test@test.com'),
-      });
-    }
-    return user;
-  })
-
   .then(() => {
     console.log('Connection has been established successfully.');
 

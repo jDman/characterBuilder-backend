@@ -4,16 +4,20 @@ const sequelizeDB = require('../database/connection');
 const User = sequelizeDB.define('user', {
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false,
   },
   email: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   gravatar_hash: {
     type: Sequelize.STRING,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 });
 
 module.exports = User;
