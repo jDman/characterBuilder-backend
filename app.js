@@ -69,16 +69,16 @@ app.use(
 // app.use(csrfProtection);
 
 app.use(
-  '/build',
+  '/api',
   characterRoutes,
   abilitiesRoutes,
   traitsRoutes,
   equipmentRoutes
 );
 
-// app.all('*', (req, res, next) => {
-//   res.cookie('XSRF-TOKEN', req.csrfToken());
-// });
+app.all('*', (req, res, next) => {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+});
 
 /** MODEL RELATIONSHIPS  **/
 
