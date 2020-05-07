@@ -7,16 +7,43 @@ const Character = require('../../models/character');
 
 const charactersMock = [
   {
+    id: '1',
     name: 'Haggard',
     background: 'acolyte',
-    race: 'elf',
-    class: 'warrior',
+    additional_info: '',
+    raceType: 'elf',
+    classType: 'warrior',
+    updatedAt: '2020-05-07T09:48:28.361Z',
   },
   {
+    id: '2',
     name: 'Jurg',
     background: 'folk_hero',
-    race: 'dwarf',
-    class: 'rogue',
+    additional_info: '',
+    raceType: 'dwarf',
+    classType: 'rogue',
+    updatedAt: '2020-05-07T09:48:28.361Z',
+  },
+];
+
+const returnedCharactersMock = [
+  {
+    id: '1',
+    name: 'Haggard',
+    background: 'acolyte',
+    additional_info: '',
+    raceType: 'elf',
+    classType: 'warrior',
+    lastUpdated: '2020-05-07T09:48:28.361Z',
+  },
+  {
+    id: '2',
+    name: 'Jurg',
+    background: 'folk_hero',
+    additional_info: '',
+    raceType: 'dwarf',
+    classType: 'rogue',
+    lastUpdated: '2020-05-07T09:48:28.361Z',
   },
 ];
 
@@ -81,6 +108,7 @@ describe('character controller', () => {
           return this;
         },
         json: function (data) {
+          console.log(data.characters);
           this.characters = data.characters;
           this.totalCharacters = data.totalCharacters;
         },
@@ -93,7 +121,7 @@ describe('character controller', () => {
         .getCharacters(req, res, () => {})
         .then((result) => {
           expect(res.statusCode).to.equal(200);
-          expect(res.characters).to.equal(charactersMock);
+          expect(res.characters).to.eql(returnedCharactersMock);
           expect(res.totalCharacters).to.equal(2);
         });
     });
@@ -153,7 +181,7 @@ describe('character controller', () => {
         .getCharacter(req, res, () => {})
         .then((result) => {
           expect(res.statusCode).to.equal(200);
-          expect(res.character).to.eql(charactersMock[0]);
+          expect(res.character).to.eql(returnedCharactersMock[0]);
         });
     });
   });
@@ -165,6 +193,17 @@ describe('character controller', () => {
       additional_info: '',
       raceType: 'human',
       classType: 'warrior',
+      updatedAt: '2020-05-07T09:48:28.361Z',
+    };
+
+    const returnedCharacter = {
+      id: '1',
+      name: 'Tester',
+      background: 'soldier',
+      additional_info: '',
+      raceType: 'human',
+      classType: 'warrior',
+      lastUpdated: '2020-05-07T09:48:28.361Z',
     };
 
     before(() => {
@@ -213,13 +252,14 @@ describe('character controller', () => {
       };
 
       Character.create.returns({
+        id: '1',
         ...aCharacter,
       });
 
       await characterController
         .addCharacter(req, res, () => {})
         .then(() => {
-          expect(res.character).to.eql(aCharacter);
+          expect(res.character).to.eql(returnedCharacter);
           expect(res.message).to.eq('Created character successfully.');
           expect(res.statusCode).to.eq(201);
         });
@@ -234,6 +274,17 @@ describe('character controller', () => {
       additional_info: '',
       raceType: 'human',
       classType: 'warrior',
+      updatedAt: '2020-05-07T09:48:28.361Z',
+    };
+
+    const returnedCharacter = {
+      id: '1',
+      name: 'Tester',
+      background: 'soldier',
+      additional_info: '',
+      raceType: 'human',
+      classType: 'warrior',
+      lastUpdated: '2020-05-07T09:48:28.361Z',
     };
 
     before(() => {
@@ -292,7 +343,7 @@ describe('character controller', () => {
       await characterController
         .editCharacter(req, res, () => {})
         .then(() => {
-          expect(res.character).to.eql(aCharacter);
+          expect(res.character).to.eql(returnedCharacter);
           expect(res.message).to.eq('Updated character successfully.');
           expect(res.statusCode).to.eq(200);
         });

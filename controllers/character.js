@@ -1,6 +1,8 @@
 const Character = require('../models/character');
 const Abilities = require('../models/abilities');
 
+const extractCharacterData = require('../utils/extractCharacterData');
+
 exports.getCharacters = async (req, res, next) => {
   const currentBatch = +req.query.batch || 1;
   const resultLimit = 10;
@@ -17,9 +19,13 @@ exports.getCharacters = async (req, res, next) => {
       order: [['id', 'DESC']],
     });
 
+    const charactersResponseDetails = characters.map((character) =>
+      extractCharacterData(character)
+    );
+
     return res.status(200).json({
       message: 'Fetched characters successfully.',
-      characters,
+      characters: charactersResponseDetails,
       totalCharacters,
     });
   } catch (err) {
@@ -39,9 +45,11 @@ exports.getCharacter = async (req, res, next) => {
       where: { id: characterId },
     });
 
+    const characterResponseDetails = extractCharacterData(character);
+
     return res.status(200).json({
       message: 'Fetched character successfully.',
-      character,
+      character: characterResponseDetails,
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -66,9 +74,12 @@ exports.addCharacter = async (req, res, next) => {
       userId,
     });
 
-    return res
-      .status(201)
-      .json({ message: 'Created character successfully.', character });
+    const characterResponseDetails = extractCharacterData(character);
+
+    return res.status(201).json({
+      message: 'Created character successfully.',
+      character: characterResponseDetails,
+    });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -89,9 +100,11 @@ exports.editCharacter = async (req, res, next) => {
       { where: { id: id } }
     );
 
+    const characterResponseDetails = extractCharacterData(updatedCharacter);
+
     return res.status(200).json({
       message: 'Updated character successfully.',
-      character: updatedCharacter,
+      character: characterResponseDetails,
     });
   } catch (err) {
     if (!err.statusCode) {
