@@ -1,6 +1,8 @@
 const Character = require('../models/character');
 const Traits = require('../models/traits');
 
+const destroyByCharacterId = require('../utils/destroy-by-characterId');
+
 exports.getTraits = async (req, res, next) => {
   const characterId = req.params.characterId;
 
@@ -140,9 +142,7 @@ exports.deleteTraits = async (req, res, next) => {
       throw error;
     }
 
-    await Traits.destroy({
-      where: { characterId: characterId },
-    });
+    await destroyByCharacterId(Traits, characterId);
 
     return res.status(200).json({
       message: 'Removed character traits successfully.',

@@ -1,6 +1,8 @@
 const Character = require('../models/character');
 const Equipment = require('../models/equipment');
 
+const destroyByCharacterId = require('../utils/destroy-by-characterId');
+
 exports.getEquipment = async (req, res, next) => {
   const characterId = req.params.characterId;
 
@@ -116,9 +118,7 @@ exports.deleteEquipment = async (req, res, next) => {
       throw error;
     }
 
-    await Equipment.destroy({
-      where: { characterId: characterId },
-    });
+    await destroyByCharacterId(Equipment, characterId);
 
     return res.status(200).json({
       message: 'Removed character equipment successfully.',

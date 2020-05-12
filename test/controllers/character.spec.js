@@ -1,8 +1,13 @@
-const { expect } = require('chai');
+const chai = require('chai');
 const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+
+const { expect } = chai;
 
 const characterController = require('../../controllers/character');
 const Abilities = require('../../models/abilities');
+const Equipment = require('../../models/equipment');
+const Traits = require('../../models/traits');
 const Character = require('../../models/character');
 
 const charactersMock = [
@@ -108,7 +113,6 @@ describe('character controller', () => {
           return this;
         },
         json: function (data) {
-          console.log(data.characters);
           this.characters = data.characters;
           this.totalCharacters = data.totalCharacters;
         },
@@ -352,13 +356,19 @@ describe('character controller', () => {
   describe('deleteCharacter', () => {
     before(() => {
       sinon.stub(Character, 'destroy');
+      sinon.stub(Abilities, 'destroy');
+      sinon.stub(Equipment, 'destroy');
+      sinon.stub(Traits, 'destroy');
     });
 
     after(() => {
       Character.destroy.restore();
+      Abilities.destroy.restore();
+      Equipment.destroy.restore();
+      Traits.destroy.restore();
     });
 
-    it('should return error 500 if accessing the database fails', async () => {
+    it('should return error 500 if accessing the database fails when accessing Character', async () => {
       const req = {
         params: {
           characterId: '1',
@@ -375,12 +385,71 @@ describe('character controller', () => {
         });
     });
 
-    it('should successfully remove a character', async () => {
+    it('should return error 500 if accessing the database fails when accessing Abilities', async () => {
       const req = {
         params: {
           characterId: '1',
         },
       };
+
+      Character.destroy.returns(true);
+      Abilities.destroy.throws();
+
+      await characterController
+        .deleteCharacter(req, {}, () => {})
+        .then((result) => {
+          expect(result).to.be.an('error');
+          expect(result).to.have.property('statusCode', 500);
+        });
+    });
+
+    it('should return error 500 if accessing the database fails when accessing Equipment', async () => {
+      const req = {
+        params: {
+          characterId: '1',
+        },
+      };
+
+      Character.destroy.returns(true);
+      Abilities.destroy.returns(true);
+      Equipment.destroy.throws();
+
+      await characterController
+        .deleteCharacter(req, {}, () => {})
+        .then((result) => {
+          expect(result).to.be.an('error');
+          expect(result).to.have.property('statusCode', 500);
+        });
+    });
+
+    it('should return error 500 if accessing the database fails when accessing Traits', async () => {
+      const req = {
+        params: {
+          characterId: '1',
+        },
+      };
+
+      Character.destroy.returns(true);
+      Abilities.destroy.returns(true);
+      Equipment.destroy.returns(true);
+      Traits.destroy.throws();
+
+      await characterController
+        .deleteCharacter(req, {}, () => {})
+        .then((result) => {
+          expect(result).to.be.an('error');
+          expect(result).to.have.property('statusCode', 500);
+        });
+    });
+
+    it('should successfully remove a character, its abilities, equipment and traits', async () => {
+      const req = {
+        params: {
+          characterId: '1',
+        },
+      };
+
+      const calledWith = { where: { characterId: '1' } };
 
       const res = {
         message: '',
@@ -396,12 +465,18 @@ describe('character controller', () => {
       };
 
       Character.destroy.returns(true);
+      Abilities.destroy.returns(true);
+      Equipment.destroy.returns(true);
+      Traits.destroy.returns(true);
 
       await characterController
         .deleteCharacter(req, res, () => {})
         .then(() => {
           expect(res.message).to.eq('Removed character successfully.');
           expect(res.statusCode).to.eq(200);
+          expect(Abilities.destroy).to.have.been.calledWith(calledWith);
+          expect(Equipment.destroy).to.have.been.calledWith(calledWith);
+          expect(Traits.destroy).to.have.been.calledWith(calledWith);
         });
     });
   });

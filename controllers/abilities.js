@@ -1,6 +1,8 @@
 const Character = require('../models/character');
 const Abilities = require('../models/abilities');
 
+const destroyByCharacterId = require('../utils/destroy-by-characterId');
+
 exports.getAbilities = async (req, res, next) => {
   const characterId = req.params.characterId;
 
@@ -120,9 +122,7 @@ exports.deleteAbilities = async (req, res, next) => {
       throw error;
     }
 
-    await Abilities.destroy({
-      where: { characterId: characterId },
-    });
+    await destroyByCharacterId(Abilities, characterId);
 
     return res.status(200).json({
       message: 'Removed character abilities successfully.',
