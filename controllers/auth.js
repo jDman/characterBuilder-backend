@@ -47,7 +47,7 @@ exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findAll({ where: { email: email.toLowerCase() } });
+    const user = await User.findOne({ where: { email: email.toLowerCase() } });
 
     if (!user) {
       const error = new Error('User not found!');

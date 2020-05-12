@@ -20,6 +20,7 @@ const Abilities = require('./models/abilities');
 const Equipment = require('./models/equipment');
 const Traits = require('./models/traits');
 
+const authRoutes = require('./routes/auth');
 const characterRoutes = require('./routes/character');
 const abilitiesRoutes = require('./routes/abilities');
 const equipmentRoutes = require('./routes/equipment');
@@ -70,6 +71,7 @@ app.use(
 
 app.use(
   '/api',
+  authRoutes,
   characterRoutes,
   abilitiesRoutes,
   traitsRoutes,
