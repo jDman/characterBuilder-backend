@@ -129,11 +129,11 @@ describe('character controller', () => {
 
   describe('getCharacter', () => {
     before(() => {
-      sinon.stub(Character, 'findAll');
+      sinon.stub(Character, 'findByPk');
     });
 
     after(() => {
-      Character.findAll.restore();
+      Character.findByPk.restore();
     });
 
     it('should throw a 500 error when fetching a character from the database fails', async () => {
@@ -143,7 +143,7 @@ describe('character controller', () => {
         },
       };
 
-      Character.findAll.throws();
+      Character.findByPk.throws();
 
       await characterController
         .getCharacter(req, {}, () => {})
@@ -173,7 +173,7 @@ describe('character controller', () => {
         },
       };
 
-      Character.findAll.returns({
+      Character.findByPk.returns({
         ...charactersMock[0],
       });
 

@@ -76,9 +76,9 @@ app.use(
   equipmentRoutes
 );
 
-app.all('*', (req, res, next) => {
-  res.cookie('XSRF-TOKEN', req.csrfToken());
-});
+// app.all('*', (req, res, next) => {
+//   res.cookie('XSRF-TOKEN', req.csrfToken());
+// });
 
 /** MODEL RELATIONSHIPS  **/
 

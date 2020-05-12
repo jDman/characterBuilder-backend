@@ -41,9 +41,7 @@ exports.getCharacter = async (req, res, next) => {
   const characterId = req.params.characterId;
 
   try {
-    const character = await Character.findAll({
-      where: { id: characterId },
-    });
+    const character = await Character.findByPk(characterId);
 
     const characterResponseDetails = extractCharacterData(character);
 
