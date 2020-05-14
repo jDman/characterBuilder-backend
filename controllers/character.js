@@ -120,10 +120,10 @@ exports.deleteCharacter = async (req, res, next) => {
   const id = req.params.characterId;
 
   try {
-    await Character.destroy({ where: { id: id } });
     await destroyByCharacterId(Abilities, id);
     await destroyByCharacterId(Equipment, id);
     await destroyByCharacterId(Traits, id);
+    await Character.destroy({ where: { id: id } });
 
     return res.status(200).json({ message: 'Removed character successfully.' });
   } catch (err) {

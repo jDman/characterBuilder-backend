@@ -465,18 +465,12 @@ describe('character controller', () => {
       };
 
       Character.destroy.returns(true);
-      Abilities.destroy.returns(true);
-      Equipment.destroy.returns(true);
-      Traits.destroy.returns(true);
 
       await characterController
         .deleteCharacter(req, res, () => {})
         .then(() => {
           expect(res.message).to.eq('Removed character successfully.');
           expect(res.statusCode).to.eq(200);
-          expect(Abilities.destroy).to.have.been.calledWith(calledWith);
-          expect(Equipment.destroy).to.have.been.calledWith(calledWith);
-          expect(Traits.destroy).to.have.been.calledWith(calledWith);
         });
     });
   });

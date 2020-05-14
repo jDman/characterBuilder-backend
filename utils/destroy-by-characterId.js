@@ -1,3 +1,7 @@
 module.exports = async (model, characterId) => {
-  await model.destroy({ where: { characterId: characterId } });
+  const item = await model.findOne({ where: { characterId: characterId } });
+
+  if (item) {
+    await item.destroy();
+  }
 };
