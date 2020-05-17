@@ -4,10 +4,11 @@ const { body } = require('express-validator');
 const router = express.Router();
 
 const characterController = require('../controllers/character');
+const isAuth = require('../middleware/is-auth');
 
-router.get('/characters', characterController.getCharacters);
+router.get('/characters', isAuth, characterController.getCharacters);
 
-router.get('/character/:characterId', characterController.getCharacter);
+router.get('/character/:characterId', isAuth, characterController.getCharacter);
 
 router.post(
   '/character/add',
@@ -15,6 +16,7 @@ router.post(
   [body('background').trim().isAlphanumeric()],
   [body('raceType').trim().isAlphanumeric()],
   [body('classType').trim().isAlphanumeric()],
+  isAuth,
   characterController.addCharacter
 );
 
@@ -24,11 +26,13 @@ router.put(
   [body('background').trim().isAlphanumeric()],
   [body('raceType').trim().isAlphanumeric()],
   [body('classType').trim().isAlphanumeric()],
+  isAuth,
   characterController.editCharacter
 );
 
 router.delete(
   '/character/remove/:characterId',
+  isAuth,
   characterController.deleteCharacter
 );
 

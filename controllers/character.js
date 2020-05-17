@@ -9,7 +9,7 @@ const destroyByCharacterId = require('../utils/destroy-by-characterId');
 exports.getCharacters = async (req, res, next) => {
   const currentBatch = +req.query.batch || 1;
   const resultLimit = 10;
-  const userId = req.user.id;
+  const userId = req.userId;
 
   try {
     const totalCharacters = await Character.count({
@@ -63,7 +63,7 @@ exports.getCharacter = async (req, res, next) => {
 
 exports.addCharacter = async (req, res, next) => {
   const { name, background, additional_info, raceType, classType } = req.body;
-  const userId = req.user.id;
+  const userId = req.userId;
 
   try {
     const character = await Character.create({

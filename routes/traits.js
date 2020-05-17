@@ -5,7 +5,9 @@ const router = express.Router();
 
 const traitsController = require('../controllers/traits');
 
-router.get('/traits/:characterId', traitsController.getTraits);
+const isAuth = require('../middleware/is-auth');
+
+router.get('/traits/:characterId', isAuth, traitsController.getTraits);
 
 router.post(
   '/traits/add/:characterId',
@@ -16,6 +18,7 @@ router.post(
   [body('size').isAlphanumeric()],
   [body('speed').isNumeric()],
   [body('languages').isAlphanumeric()],
+  isAuth,
   traitsController.addTraits
 );
 
@@ -27,9 +30,14 @@ router.put(
   [body('intelligence').isNumeric()],
   [body('wisdom').isNumeric()],
   [body('charisma').isNumeric()],
+  isAuth,
   traitsController.editTraits
 );
 
-router.delete('/traits/remove/:characterId', traitsController.deleteTraits);
+router.delete(
+  '/traits/remove/:characterId',
+  isAuth,
+  traitsController.deleteTraits
+);
 
 module.exports = router;

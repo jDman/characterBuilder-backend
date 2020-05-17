@@ -2,15 +2,14 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const SessionStore = require('express-session-sequelize')(session.Store);
 const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 const multer = require('multer');
 
-const csrfProtection = csrf({ cookie: true });
-
-const SESSION_SECRET = require('./database/session-secret');
+const csrfProtection = csrf({
+  cookie: true,
+  ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
+});
 
 const generateMD5 = require('./utils/generateMD5');
 
@@ -28,46 +27,35 @@ const traitsRoutes = require('./routes/traits');
 
 const sequelizeDB = require('./database/connection');
 
-const sequelizeSessionStore = new SessionStore({
-  db: sequelizeDB,
-});
-
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  User.findByPk(1)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(err));
-});
-
-app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     'Access-Control-Allow-Methods',
-    'GET, POST, PUT, PATCH, DELETE'
+    'GET, POST, PUT, PATCH, DELETE, OPTIONS'
   );
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, Content-Type, Accept, _csurf, xsrf-token'
+  );
+
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   next();
 });
 
 app.disable('x-powered-by');
+app.disable('X-Powered-By');
 
 app.use(cookieParser());
-app.use(
-  session({
-    secret: SESSION_SECRET,
-    store: sequelizeSessionStore,
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-// app.use(csrfProtection);
+
+app.use(csrfProtection, (req, res, next) => {
+  res.cookie('XSRF_TOKEN', req.csrfToken(), { httpOnly: false, path: '/' });
+  next();
+});
 
 app.use(
   '/api',
@@ -77,10 +65,6 @@ app.use(
   traitsRoutes,
   equipmentRoutes
 );
-
-// app.all('*', (req, res, next) => {
-//   res.cookie('XSRF-TOKEN', req.csrfToken());
-// });
 
 /** MODEL RELATIONSHIPS  **/
 

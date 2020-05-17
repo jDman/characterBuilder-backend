@@ -78,8 +78,6 @@ exports.login = async (req, res, next) => {
       { expiresIn: '1h' }
     );
 
-    // res.cookie('XSRF-TOKEN', req.csrfToken());
-
     return res.status(200).json({
       message: 'User authenticated',
       token,

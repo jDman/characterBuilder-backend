@@ -5,7 +5,9 @@ const router = express.Router();
 
 const abilitiesController = require('../controllers/abilities');
 
-router.get('/abilities/:characterId', abilitiesController.getAbilities);
+const isAuth = require('../middleware/is-auth');
+
+router.get('/abilities/:characterId', isAuth, abilitiesController.getAbilities);
 
 router.post(
   '/abilities/add/:characterId',
@@ -15,6 +17,7 @@ router.post(
   [body('intelligence').isNumeric()],
   [body('wisdom').isNumeric()],
   [body('charisma').isNumeric()],
+  isAuth,
   abilitiesController.addAbilities
 );
 
@@ -26,11 +29,13 @@ router.put(
   [body('intelligence').isNumeric()],
   [body('wisdom').isNumeric()],
   [body('charisma').isNumeric()],
+  isAuth,
   abilitiesController.editAbilities
 );
 
 router.delete(
   '/abilities/remove/:characterId',
+  isAuth,
   abilitiesController.deleteAbilities
 );
 

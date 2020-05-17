@@ -5,13 +5,16 @@ const router = express.Router();
 
 const equipmentController = require('../controllers/equipment');
 
-router.get('/equipment/:characterId', equipmentController.getEquipment);
+const isAuth = require('../middleware/is-auth');
+
+router.get('/equipment/:characterId', isAuth, equipmentController.getEquipment);
 
 router.post(
   '/equipment/add/:characterId',
   [body('armor_class').isNumeric()],
   [body('weapon_proficiencies').isAlphanumeric()],
   [body('wealth').isNumeric()],
+  isAuth,
   equipmentController.addEquipment
 );
 
@@ -20,11 +23,13 @@ router.put(
   [body('armor_class').isNumeric()],
   [body('weapon_proficiencies').isAlphanumeric()],
   [body('wealth').isNumeric()],
+  isAuth,
   equipmentController.editEquipment
 );
 
 router.delete(
   '/equipment/remove/:characterId',
+  isAuth,
   equipmentController.deleteEquipment
 );
 
